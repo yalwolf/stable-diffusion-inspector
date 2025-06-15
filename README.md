@@ -70,12 +70,6 @@ console.log('图片元数据:', imageResult.fileInfo);
 console.log('图片尺寸:', imageResult.imageInfo);
 ```
 
-## 示例代码
-
-```html
-
-```
-
 ## 贡献
 
 欢迎提交 issue 和 PR！请遵循以下规范：
