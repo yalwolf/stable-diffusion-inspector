@@ -1,6 +1,6 @@
 {
   "name": "stable-diffusion-inspector",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
   "description": "read pnginfo in stable diffusion generated images / inspect models",
@@ -27,10 +27,12 @@
     "start": "node dist/main.js"
   },
   "dependencies": {
+    "@types/bytes": "^3.1.5",
     "@types/image-size": "^0.8.0",
     "@types/node": "^24.0.1",
     "@types/pako": "^2.0.3",
     "@types/pretty-bytes": "^5.2.0",
+    "bytes": "^3.1.2",
     "exifreader": "^4.31.0",
     "fs": "^0.0.1-security",
     "nodemon": "^3.1.10",

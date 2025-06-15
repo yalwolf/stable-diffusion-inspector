@@ -2,21 +2,18 @@ export interface ImageMetadata {
     keyword: string;
     text: string;
 }
-
 export interface FileInfoItem {
     key: string;
     value: string | {
         [key: string]: any;
     };
 }
-
 export interface ModelType {
     name: string;
     identifier: string;
     usage: string;
     sigs: string[];
 }
-
 export interface ImageInspectionResult {
     fileInfo: FileInfoItem[];
     exif?: any[];
@@ -27,17 +24,14 @@ export interface ImageInspectionResult {
     };
     jsonData?: any;
 }
-
 export interface ModelInspectionResult {
     fileInfo: FileInfoItem[];
     jsonData?: any;
 }
-
 declare class SDMetadataParser {
     private modelTypes;
     private availableImgExt;
     private availableModelExt;
-
     /**
      * 检查文件类型并分发给相应的解析器
      * @param filePath 文件路径
@@ -48,14 +42,24 @@ declare class SDMetadataParser {
      * 解析图片文件的元数据
      * @param filePath 图片文件路径
      */
-    inspectImage(filePath: string): Promise<ImageInspectionResult>;
+    inspectImage(filePath: string): Promise<{
+        jsonData: string | {
+            [p: string]: any;
+        } | undefined;
+        fileInfo: FileInfoItem[];
+        imageInfo: {
+            size: string | null;
+            width: number;
+            height: number;
+        };
+        exif: any[];
+    }>;
 
     /**
      * 解析模型文件的元数据
      * @param filePath 模型文件路径
      */
     inspectModel(filePath: string): Promise<ModelInspectionResult>;
-
     /**
      * 从safetensors文件提取元数据
      * @param buffer 文件Buffer
@@ -96,11 +100,13 @@ declare class SDMetadataParser {
      */
     private printableBytes;
     /**
-     * 获取隐藏的EXIF数据（待实现）
+     * 获取隐藏的EXIF数据
      * @param buffer 图片Buffer
      */
     private getStealthExif;
 }
 
 export default SDMetadataParser;
+export {SDMetadataParser};
+export = SDMetadataParser;
 //# sourceMappingURL=main.d.ts.map

@@ -46,7 +46,8 @@ const asyncFileReaderAsDataURL = (file) => {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = (e) => {
-            resolve(e.target?.result);
+            var _a;
+            resolve((_a = e.target) === null || _a === void 0 ? void 0 : _a.result);
         };
         reader.onerror = (e) => {
             reject(e);

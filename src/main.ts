@@ -1,16 +1,12 @@
 import * as fs from 'fs';
 import * as path from 'path';
-// @ts-ignore
 import ExifReader from 'exifreader';
 // @ts-ignore
 import extractChunks from 'png-chunks-extract';
 // @ts-ignore
 import * as pngChunkText from 'png-chunk-text';
-import {Buffer} from 'buffer';
+import bytes from 'bytes';
 import imageSize from 'image-size';
-
-// 导入模型签名数据
-// @ts-ignore
 import modelsig from './modelsig.json';
 
 // 类型定义
@@ -73,7 +69,12 @@ class SDMetadataParser {
      * 解析图片文件的元数据
      * @param filePath 图片文件路径
      */
-    async inspectImage(filePath: string): Promise<ImageInspectionResult> {
+    async inspectImage(filePath: string): Promise<{
+        jsonData: string | { [p: string]: any } | undefined;
+        fileInfo: FileInfoItem[];
+        imageInfo: { size: string | null; width: number; height: number };
+        exif: any[]
+    }> {
         const buffer = await fs.promises.readFile(filePath);
         const fileName = path.basename(filePath);
         const fileStats = await fs.promises.stat(filePath);
@@ -87,7 +88,7 @@ class SDMetadataParser {
         const imageInfo = {
             width: dimensions.width,
             height: dimensions.height,
-            size: this.printableBytes(fileStats.size)
+            size: bytes(fileStats.size)
         };
 
         // 读取EXIF数据
@@ -162,9 +163,9 @@ class SDMetadataParser {
 
                 const modelKeys = Object.keys(meta).filter(key => key !== '__metadata__');
                 modelKeysContent = modelKeys.join('\n');
-            } catch (e) {
+            } catch (e: any) {
                 return {
-                    fileInfo: [{key: '错误', value: '😈 解析失败，该文件可能不是一个正常的模型文件。停止解析。'}]
+                    fileInfo: [{key: '错误', value: `😈 解析失败: ${e.message}`}]
                 };
             }
         }
@@ -193,7 +194,9 @@ class SDMetadataParser {
         }
 
         const fileInfo: FileInfoItem[] = [
-            {key: '文件名', value: fileName},
+            {key: '文件名', value: fileName.split('.').slice(0, -1).join('.')},
+            {key: '后缀名', value: fileName.split('.').pop() || ''},
+            // @ts-ignore
             {key: '文件大小', value: this.printableBytes(fileSize)},
             {
                 key: '模型种类',
@@ -222,8 +225,18 @@ class SDMetadataParser {
      * @param buffer 文件Buffer
      */
     private async getSafetensorsMeta(buffer: Buffer): Promise<any> {
+        // 检查文件长度是否足够
+        if (buffer.length < 8) {
+            throw new Error('File too short to be a valid safetensors file.');
+        }
+
         // 读取头部长度 (8字节小端序)
-        const headerLength = buffer.readUIntLE(0, 8);
+        const headerLength = Number(buffer.readBigUInt64LE(0));
+
+        // 检查头部长度是否合理
+        if (8 + headerLength > buffer.length) {
+            throw new Error('Header length exceeds file size.');
+        }
 
         // 提取JSON头部
         const headerJson = buffer.toString('utf8', 8, 8 + headerLength);
@@ -339,7 +352,7 @@ class SDMetadataParser {
         let jsonData: any = null;
 
         if (metadata.length === 0) {
-            // 尝试读取隐藏的EXIF数据（需要实现getStealthExif）
+            // 尝试读取隐藏的EXIF数据
             const stealthExif = await this.getStealthExif(buffer);
             if (stealthExif) {
                 parsed = Object.keys(stealthExif).map(key => ({
@@ -361,8 +374,9 @@ class SDMetadataParser {
         }
 
         const fileInfo: FileInfoItem[] = [
-            {key: '文件名', value: fileName},
-            {key: '文件大小', value: this.printableBytes(fileSize)},
+            {key: '文件名', value: fileName.split('.').slice(0, -1).join('.')},
+            {key: '后缀名', value: fileName.split('.').pop() || ''},
+            {key: '文件大小', value: bytes(fileSize)},
             ...parsed.map(v => {
                 if (this.showJsonViewer(v.keyword)) {
                     try {
@@ -370,6 +384,7 @@ class SDMetadataParser {
                         return {key: v.keyword, value: jsonData};
                     } catch (e) {
                         console.error('JSON parse error:', e);
+                        return {key: v.keyword, value: v.text};
                     }
                 }
                 return {key: v.keyword, value: v.text};
@@ -407,26 +422,26 @@ class SDMetadataParser {
      * 格式化字节大小
      * @param size 字节大小
      */
-    private printableBytes(size: number): string {
-        const kb = size / 1024;
-        if (kb < 1024) return `${kb.toFixed(2)} KB`;
-
-        const mb = kb / 1024;
-        if (mb < 1024) return `${mb.toFixed(2)} MB`;
-
-        const gb = mb / 1024;
-        return `${gb.toFixed(2)} GB`;
+    private printableBytes(size: number): string | null {
+        return bytes(size);
     }
 
     /**
-     * 获取隐藏的EXIF数据（待实现）
+     * 获取隐藏的EXIF数据
      * @param buffer 图片Buffer
      */
     private async getStealthExif(buffer: Buffer): Promise<Record<string, string> | null> {
-        // 这里需要实现从图片中提取隐藏的EXIF数据
-        // 目前返回null作为占位符
-        return null;
+        // 简化实现 - 实际中可能需要更复杂的逻辑
+        try {
+            const exif = ExifReader.load(buffer.buffer);
+            return exif ? Object.fromEntries(Object.entries(exif).map(([key, value]) => [key, value.description || value.value])) : null;
+        } catch (e) {
+            return null;
+        }
     }
 }
 
 export default SDMetadataParser;
+export {SDMetadataParser}
+// @ts-ignore
+export = SDMetadataParser;
