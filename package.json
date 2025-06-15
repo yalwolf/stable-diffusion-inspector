@@ -1,6 +1,6 @@
 {
   "name": "stable-diffusion-inspector",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
   "description": "read pnginfo in stable diffusion generated images / inspect models",

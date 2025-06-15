@@ -105,5 +105,4 @@ declare class SDMetadataParser {
 }
 export default SDMetadataParser;
 export {SDMetadataParser};
-export = SDMetadataParser;
 //# sourceMappingURL=main.d.ts.map

@@ -39,6 +39,7 @@ var __importStar = (this && this.__importStar) || (function () {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : {"default": mod};
 };
+Object.defineProperty(exports, "__esModule", {value: true});
 exports.SDMetadataParser = void 0;
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
@@ -391,5 +392,6 @@ class SDMetadataParser {
         }
     }
 }
+
+exports.SDMetadataParser = SDMetadataParser;
 exports.default = SDMetadataParser;
-module.exports = SDMetadataParser;

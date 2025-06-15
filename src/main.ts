@@ -43,17 +43,17 @@ export interface ModelInspectionResult {
     jsonData?: any;
 }
 
-class SDMetadataParser {
-    private modelTypes: ModelType[] = modelsig.data;
-    private availableImgExt = ['png', 'jpeg', 'jpg', 'webp', 'bmp', 'avif'];
-    private availableModelExt = ['pt', 'pth', 'ckpt', 'safetensors', 'bin'];
+ class SDMetadataParser {
+     private modelTypes: ModelType[] = modelsig.data;
+     private availableImgExt = ['png', 'jpeg', 'jpg', 'webp', 'bmp', 'avif'];
+     private availableModelExt = ['pt', 'pth', 'ckpt', 'safetensors', 'bin'];
 
-    /**
-     * 检查文件类型并分发给相应的解析器
-     * @param filePath 文件路径
-     */
-    async inspectFile(filePath: string): Promise<ImageInspectionResult | ModelInspectionResult> {
-        const ext = path.extname(filePath).slice(1).toLowerCase();
+     /**
+      * 检查文件类型并分发给相应的解析器
+      * @param filePath 文件路径
+      */
+     async inspectFile(filePath: string): Promise<ImageInspectionResult | ModelInspectionResult> {
+         const ext = path.extname(filePath).slice(1).toLowerCase();
 
         if (this.availableImgExt.includes(ext)) {
             return this.inspectImage(filePath);
@@ -443,5 +443,3 @@ class SDMetadataParser {
 
 export default SDMetadataParser;
 export {SDMetadataParser}
-// @ts-ignore
-export = SDMetadataParser;
