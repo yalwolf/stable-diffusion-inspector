@@ -1,0 +1,6 @@
+{
+  "name": "@alwolf/stable-diffusion-inspector",
+  "version": "1.0.2",
+  "license": "GPL-3.0",
+  "exports": "./src/main.ts"
+}

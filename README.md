@@ -9,6 +9,8 @@ read pnginfo in stable diffusion generated images / inspect models
 
 ## 安装
 
+### NodeJs
+
 ```bash
 npm install stable-diffusion-inspector
 ```
@@ -19,6 +21,12 @@ npm install stable-diffusion-inspector
 yarn add stable-diffusion-inspector
 ```
 
+### Deno
+
+```bash
+deno add jsr:@alwolf/stable-diffusion-inspector
+```
+
 ## 使用方法
 
 ### Node.js
@@ -26,7 +34,7 @@ yarn add stable-diffusion-inspector
 JavaScript
 
 ```javascript
-const {SDMetadataParser} = require('stable-diffusion-inspector');
+const SDMetadataParser = require('stable-diffusion-inspector');
 const parser = new SDMetadataParser();
 ```
 
@@ -75,6 +83,10 @@ console.log('图片尺寸:', imageResult.imageInfo);
 - 提交 issue 报告 bug 或提出功能请求
 - 创建分支并提交 PR 实现新功能或修复问题
 - 确保代码风格一致
+
+## 仓库
+
+[GitHub](https://github.com/yalwolf/stable-diffusion-inspector) | [Gitee](https://gitee.com/alwolf/stable-diffusion-inspector) | [NPM](https://www.npmjs.com/package/stable-diffusion-inspector) | [Done jsr.io](https://jsr.io/@alwolf/stable-diffusion-inspector)
 
 ## 鸣谢
 
