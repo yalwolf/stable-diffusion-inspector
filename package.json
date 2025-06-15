@@ -1,0 +1,27 @@
+{
+  "name": "stable_diffusion_inspector",
+  "version": "1.0.0",
+  "main": "src/main.js",
+  "license": "GPL-3.0",
+  "scripts": {
+    "build": "tsc",
+    "dev": "nodemon --watch 'src/**/*' -e ts --exec 'ts-node src/main.ts'",
+    "start": "node dist/main.js"
+  },
+  "dependencies": {
+    "@types/image-size": "^0.8.0",
+    "@types/node": "^24.0.1",
+    "@types/pako": "^2.0.3",
+    "@types/pretty-bytes": "^5.2.0",
+    "exifreader": "^4.31.0",
+    "fs": "^0.0.1-security",
+    "nodemon": "^3.1.10",
+    "pako": "^2.1.0",
+    "path": "^0.12.7",
+    "png-chunk-text": "^1.0.0",
+    "png-chunks-extract": "^1.0.0",
+    "pretty-bytes": "^7.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  }
+}
