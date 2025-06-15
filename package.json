@@ -1,7 +1,25 @@
 {
-  "name": "stable_diffusion_inspector",
-  "version": "1.0.0",
-  "main": "src/main.js",
+  "name": "stable-diffusion-inspector",
+  "version": "1.0.1",
+  "main": "dist/main.js",
+  "types": "dist/main.d.ts",
+  "description": "read pnginfo in stable diffusion generated images / inspect models",
+  "homepage": "https://github.com/yalwolf/stable-diffusion-inspector",
+  "author": "yalwolf",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yalwolf/stable-diffusion-inspector.git"
+  },
+  "keywords": [
+    "Stable Diffusion",
+    "pnginfo",
+    "png",
+    "inspector",
+    "parser"
+  ],
+  "bugs": {
+    "url": "https://github.com/yalwolf/stable-diffusion-inspector/issues"
+  },
   "license": "GPL-3.0",
   "scripts": {
     "build": "tsc",

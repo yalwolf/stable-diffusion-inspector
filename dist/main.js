@@ -52,14 +52,12 @@ const image_size_1 = __importDefault(require("image-size"));
 // 导入模型签名数据
 // @ts-ignore
 const modelsig_json_1 = __importDefault(require("./modelsig.json"));
-
 class SDMetadataParser {
     constructor() {
         this.modelTypes = modelsig_json_1.default.data;
         this.availableImgExt = ['png', 'jpeg', 'jpg', 'webp', 'bmp', 'avif'];
         this.availableModelExt = ['pt', 'pth', 'ckpt', 'safetensors', 'bin'];
     }
-
     /**
      * 检查文件类型并分发给相应的解析器
      * @param filePath 文件路径
@@ -75,7 +73,6 @@ class SDMetadataParser {
                 [...this.availableImgExt, ...this.availableModelExt].join(', '));
         }
     }
-
     /**
      * 解析图片文件的元数据
      * @param filePath 图片文件路径
@@ -107,7 +104,6 @@ class SDMetadataParser {
             jsonData: fileInfo.find(item => item.key === 'jsonData')?.value
         };
     }
-
     /**
      * 解析模型文件的元数据
      * @param filePath 模型文件路径
@@ -199,7 +195,6 @@ class SDMetadataParser {
             jsonData: metaJson
         };
     }
-
     /**
      * 从safetensors文件提取元数据
      * @param buffer 文件Buffer
@@ -215,7 +210,6 @@ class SDMetadataParser {
             throw new Error('Invalid safetensors header: ' + e.message);
         }
     }
-
     /**
      * 读取图片文件的EXIF数据
      * @param buffer 图片Buffer
@@ -228,7 +222,6 @@ class SDMetadataParser {
             return [];
         }
     }
-
     /**
      * 从图片文件中提取元数据
      * @param buffer 图片Buffer
@@ -283,7 +276,6 @@ class SDMetadataParser {
         }
         return [];
     }
-
     /**
      * 处理WebUI生成的标签
      * @param data 原始数据
@@ -298,7 +290,6 @@ class SDMetadataParser {
             {keyword: '其他参数', text: 'Steps: ' + otherParas}
         ];
     }
-
     /**
      * 读取图片文件信息
      * @param buffer 图片Buffer
@@ -361,7 +352,6 @@ class SDMetadataParser {
         }
         return fileInfo;
     }
-
     /**
      * 检查是否需要显示JSON查看器
      * @param title 标题
@@ -369,7 +359,6 @@ class SDMetadataParser {
     showJsonViewer(title) {
         return ['Comment', 'workflow'].includes(title);
     }
-
     /**
      * 格式化字节大小
      * @param size 字节大小
@@ -384,7 +373,6 @@ class SDMetadataParser {
         const gb = mb / 1024;
         return `${gb.toFixed(2)} GB`;
     }
-
     /**
      * 获取隐藏的EXIF数据（待实现）
      * @param buffer 图片Buffer
@@ -395,5 +383,4 @@ class SDMetadataParser {
         return null;
     }
 }
-
 exports.default = SDMetadataParser;

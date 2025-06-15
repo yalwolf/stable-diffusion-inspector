@@ -1,10 +1,11 @@
 # stable-diffusion-inspector
 
-从 Stable Diffusion 生成的图片中读取 pnginfo 来获取生成的参数 / Stable Diffusion 模型类别解析
+Stable Diffusion 生成的图片中读取 pnginfo 来获取生成的参数 / Stable Diffusion 模型类别解析
+read pnginfo in stable diffusion generated images / inspect models
 
 ## 简介
 
-这是一个用于解析 Stable Diffusion 模型文件和图像文件的工具，可以从模型文件中识别模型类型，并从图像文件中提取生成参数。
+这是一个用于解析 Stable Diffusion 模型文件和图像文件的工具库，可以从模型文件中识别模型类型，并从图像文件中提取生成参数。
 
 ## 安装
 
@@ -12,20 +13,29 @@
 npm install stable-diffusion-inspector
 ```
 
+或
+
+```bash
+yarn add stable-diffusion-inspector
+```
+
 ## 使用方法
 
-### Node.js 环境
+### Node.js
 
 JavaScript
 
 ```javascript
 const {SDMetadataParser} = require('stable-diffusion-inspector');
+const parser = new SDMetadataParser();
 ```
 
 TypeScript
 
 ```typescript
 import SDMetadataParser from 'stable-diffusion-inspector';
+
+const parser = new SDMetadataParser();
 ```
 
 ## 功能特性

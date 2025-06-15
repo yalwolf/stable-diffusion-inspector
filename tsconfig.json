@@ -14,12 +14,20 @@
     // 改进模块兼容性
     "skipLibCheck": true,
     // 跳过库文件检查
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
     // 允许从 JSON 文件导入
+    "declaration": true,
+    // 生成声明文件
+    "declarationMap": true
+    // 生成声明文件映射
   },
   "include": [
     "src/**/*.ts",
     "src/**/*.json"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
   ]
   // 包含的源文件
 }

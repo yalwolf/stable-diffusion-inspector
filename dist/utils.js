@@ -7,17 +7,14 @@ exports.getSafetensorsMetaKohya = exports.getSafetensorsMeta = exports.tryExtrac
 exports.getStealthExif = getStealthExif;
 // @ts-ignore
 const pako_1 = __importDefault(require("pako"));
-
 class DataReader {
     constructor(data) {
         this.data = data;
         this.index = 0;
     }
-
     readBit() {
         return this.data[this.index++];
     }
-
     readNBits(n) {
         let bits = [];
         for (let i = 0; i < n; i++) {
@@ -25,7 +22,6 @@ class DataReader {
         }
         return bits;
     }
-
     readByte() {
         let byte = 0;
         for (let i = 0; i < 8; i++) {
@@ -33,7 +29,6 @@ class DataReader {
         }
         return byte;
     }
-
     readNBytes(n) {
         let bytes = [];
         for (let i = 0; i < n; i++) {
@@ -41,13 +36,11 @@ class DataReader {
         }
         return bytes;
     }
-
     readInt32() {
         let bytes = this.readNBytes(4);
         return new DataView(new Uint8Array(bytes).buffer).getInt32(0, false);
     }
 }
-
 exports.DataReader = DataReader;
 const asyncFileReaderAsDataURL = (file) => {
     return new Promise((resolve, reject) => {
@@ -120,7 +113,6 @@ const getSafetensorsMetaKohya = async (file) => {
     return data;
 };
 exports.getSafetensorsMetaKohya = getSafetensorsMetaKohya;
-
 async function getStealthExif(src) {
     let time = performance.now();
     let canvas = document.createElement('canvas');
