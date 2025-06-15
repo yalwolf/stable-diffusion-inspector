@@ -1,0 +1,13 @@
+.idea
+.vscode
+node_modules
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+*.tiff
+*.webp
+*.pt
+*.ckpt
+*.safetensors
