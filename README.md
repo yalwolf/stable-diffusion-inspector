@@ -70,6 +70,29 @@ console.log('图片元数据:', imageResult.fileInfo);
 console.log('图片尺寸:', imageResult.imageInfo);
 ```
 
+## 示例代码
+
+```javascript
+async function main() {
+    const parser = new SDMetadataParser();
+
+    try {
+        // 解析图片
+        const imageResult = await parser.inspectImage('path/to/image.png');
+        console.log('Meta data:', imageResult.fileInfo);
+        console.log('Photo size:', imageResult.imageInfo);
+
+        // 解析模型
+        const modelResult = await parser.inspectModel('path/to/model.safetensors');
+        console.log('model info:', modelResult.fileInfo);
+    } catch (error) {
+        console.error('error:', error);
+    }
+}
+
+main();
+```
+
 ## 贡献
 
 欢迎提交 issue 和 PR！请遵循以下规范：
