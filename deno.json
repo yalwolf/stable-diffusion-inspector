@@ -1,7 +1,7 @@
 {
   "name": "@alwolf/stable-diffusion-inspector",
   "description": "read pnginfo in stable diffusion generated images / inspect models",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "license": "GPL-3.0",
   "exports": "./main.ts",
   "tasks": {
