@@ -11,4 +11,3 @@ node_modules
 *.pt
 *.ckpt
 *.safetensors
-test.js

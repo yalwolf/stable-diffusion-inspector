@@ -377,7 +377,6 @@ class SDMetadataParser {
     printableBytes(size) {
         return (0, bytes_1.default)(size);
     }
-
     /**
      * 获取隐藏的EXIF数据
      * @param buffer 图片Buffer
@@ -392,6 +391,5 @@ class SDMetadataParser {
         }
     }
 }
-
 exports.default = SDMetadataParser;
 module.exports = SDMetadataParser;

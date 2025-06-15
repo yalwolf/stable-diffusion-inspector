@@ -37,7 +37,6 @@ declare class SDMetadataParser {
      * @param filePath 文件路径
      */
     inspectFile(filePath: string): Promise<ImageInspectionResult | ModelInspectionResult>;
-
     /**
      * 解析图片文件的元数据
      * @param filePath 图片文件路径
@@ -54,7 +53,6 @@ declare class SDMetadataParser {
         };
         exif: any[];
     }>;
-
     /**
      * 解析模型文件的元数据
      * @param filePath 模型文件路径
@@ -105,7 +103,6 @@ declare class SDMetadataParser {
      */
     private getStealthExif;
 }
-
 export default SDMetadataParser;
 export {SDMetadataParser};
 export = SDMetadataParser;
