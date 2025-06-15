@@ -3,5 +3,12 @@
   "description": "read pnginfo in stable diffusion generated images / inspect models",
   "version": "1.0.2",
   "license": "GPL-3.0",
-  "exports": "./src/main.deno.ts"
+  "exports": "./main.ts",
+  "tasks": {
+    "dev": "deno run --allow-read --allow-env test.ts"
+  },
+  "imports": {
+    "@types/node": "npm:@types/node@^24.0.1",
+    "exifreader": "npm:exifreader@3.16.0"
+  }
 }

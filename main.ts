@@ -1,13 +1,13 @@
 // 使用Deno的路径模块
-import * as path from "https://deno.land/std@0.192.0/path/mod.ts";
-// 使用URL导入第三方模块
-import ExifReader from "https://esm.sh/exifreader@3.16.0";
-import extractChunks from "https://esm.sh/png-chunks-extract@1.0.0";
-import pngChunkText from "https://esm.sh/png-chunk-text@1.0.0";
-import bytes from "https://esm.sh/bytes@3.1.2";
-import imageSize from "https://esm.sh/image-size@1.0.2";
-// @ts-ignore 模型签名数据
-import modelsig from "./modelsig.json" assert { type: "json" };
+import * as path from "jsr:@std/path@1";
+import ExifReader from "npm:exifreader@3.16.0";
+import extractChunks from "npm:png-chunks-extract@1.0.0";
+import * as pngChunkText from "npm:png-chunk-text@1.0.0";
+import bytes from "npm:bytes@3.1.2";
+import imageSize from "npm:image-size@1.0.2";
+// 修复JSON模块导入语法
+import modelsig from "./modelsig.json" with { type: "json" };
+import { Buffer } from "node:buffer"; // 添加Buffer导入
 
 // 类型定义保持不变
 export interface ImageMetadata {
@@ -69,26 +69,25 @@ class SDMetadataParser {
      * 解析图片文件的元数据
      * @param filePath 图片文件路径
      */
-    async inspectImage(filePath: string): Promise<{
-        jsonData: string | { [p: string]: any } | undefined;
-        fileInfo: FileInfoItem[];
-        imageInfo: { width: number; height: number; size: unknown };
-        exif: any[]
-    }> {
-        const buffer = await Deno.readFile(filePath);
+    async inspectImage(filePath: string): Promise<ImageInspectionResult> {
+        const buffer: Uint8Array = await Deno.readFile(filePath);
         const fileName = path.basename(filePath);
         const fileStats = await Deno.stat(filePath);
 
+        // 修复: image-size 没有默认导出
         // 获取图片尺寸信息
-        const dimensions = imageSize(buffer);
+        // 将Uint8Array转换为Buffer
+        const nodeBuffer = Buffer.from(buffer);
+        const dimensions = imageSize.imageSize(nodeBuffer);
         if (!dimensions.width || !dimensions.height) {
             throw new Error('Could not determine image dimensions');
         }
 
-        const imageInfo: { width: number; height: number; size: unknown } = {
+        const sizeStr = bytes(fileStats.size) || `${fileStats.size} bytes`;
+        const imageInfo = {
             width: dimensions.width,
             height: dimensions.height,
-            size: bytes(fileStats.size)
+            size: sizeStr
         };
 
         // 读取EXIF数据
@@ -193,11 +192,11 @@ class SDMetadataParser {
             }
         }
 
+        const sizeStr = bytes(fileSize) || `${fileSize} bytes`;
         const fileInfo: FileInfoItem[] = [
             {key: '文件名', value: fileName.split('.').slice(0, -1).join('.')},
             {key: '后缀名', value: fileName.split('.').pop() || ''},
-            // @ts-ignore
-            {key: '文件大小', value: this.printableBytes(fileSize)},
+            {key: '文件大小', value: sizeStr},
             {
                 key: '模型种类',
                 value: modelType
@@ -285,6 +284,7 @@ class SDMetadataParser {
                     .filter((chunk: any) => chunk.name === 'tEXt' || chunk.name === 'iTXt')
                     .map((chunk: any) => {
                         if (chunk.name === 'iTXt') {
+                            // 修复: 移除所有null字节
                             const data = chunk.data.filter((x: any) => x !== 0x00);
                             const header = new TextDecoder().decode(data.slice(0, 11));
                             if (header === 'Description') {
@@ -304,6 +304,7 @@ class SDMetadataParser {
                         }
                     });
             } catch (err) {
+                console.error('PNG metadata extraction error:', err);
                 return [];
             }
         }
@@ -317,14 +318,21 @@ class SDMetadataParser {
                 );
                 const data = ExifReader.load(arrayBuffer);
                 if (data.UserComment) {
-                    // @ts-ignore
-                    const metadata = String.fromCodePoint(...data.UserComment.value)
-                        .replace(/\x00/g, '')
-                        .slice(7);
+                    // 修复: 正确处理UserComment类型
+                    let metadata = "";
+                    if (Array.isArray(data.UserComment.value)) {
+                        metadata = String.fromCodePoint(...data.UserComment.value)
+                            .replace(/\x00/g, '')
+                            .slice(7);
+                    } else {
+                        metadata = String(data.UserComment.value)
+                            .replace(/\x00/g, '')
+                            .slice(7);
+                    }
                     return [{keyword: 'parameters', text: metadata}];
                 }
             } catch (e) {
-                // 忽略错误
+                console.error('EXIF metadata extraction error:', e);
             }
         }
 
@@ -386,10 +394,11 @@ class SDMetadataParser {
             metaType = 'NOVELAI';
         }
 
+        const sizeStr = bytes(fileSize) || `${fileSize} bytes`;
         const fileInfo: FileInfoItem[] = [
             {key: '文件名', value: fileName.split('.').slice(0, -1).join('.')},
             {key: '后缀名', value: fileName.split('.').pop() || ''},
-            {key: '文件大小', value: bytes(fileSize)},
+            {key: '文件大小', value: sizeStr},
             ...parsed.map(v => {
                 if (this.showJsonViewer(v.keyword)) {
                     try {
@@ -432,14 +441,6 @@ class SDMetadataParser {
     }
 
     /**
-     * 格式化字节大小
-     * @param size 字节大小
-     */
-    private printableBytes(size: number): string | null {
-        return bytes(size);
-    }
-
-    /**
      * 获取隐藏的EXIF数据
      * @param buffer 图片Buffer
      */
@@ -451,8 +452,17 @@ class SDMetadataParser {
                 buffer.byteOffset + buffer.byteLength
             );
             const exif = ExifReader.load(arrayBuffer);
-            return exif ? Object.fromEntries(Object.entries(exif).map(([key, value]) => [key, value.description || value.value])) : null;
+            if (!exif) return null;
+
+            // 将EXIF数据转换为简单键值对
+            const result: Record<string, string> = {};
+            for (const [key, value] of Object.entries(exif)) {
+                // @ts-ignore
+                result[key] = value.description || value.value || "";
+            }
+            return result;
         } catch (e) {
+            console.error('Stealth EXIF extraction error:', e);
             return null;
         }
     }
